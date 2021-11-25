@@ -38,7 +38,7 @@ function CustomersTable({ customers }) {
       key: 'email'
     }
   ];
-  return <Table dataSource={customers} columns={columns} />
+  return <Table dataSource={customers} columns={columns} rowKey="id" />
 }
 
 export async function getStaticProps() {
