@@ -1,6 +1,14 @@
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, Switch } from 'antd'
+import { CloseOutlined, CheckOutlined } from '@ant-design/icons'
+import React from 'react'
 
 function Customer({ customer }) {
+  const [disabled, setDisabled] = React.useState(true)
+
+  const toggle = () => {
+    setDisabled(!disabled)
+  }
+
   return (
     <Form
       labelCol={{
@@ -25,37 +33,37 @@ function Customer({ customer }) {
         label="Name"
         name="name"
       >
-        <Input />
+        <Input disabled={disabled} />
       </Form.Item>
       <Form.Item
         label="Last Name"
         name="last_name"
       >
-        <Input />
+        <Input disabled={disabled} />
       </Form.Item>
       <Form.Item
         label="Alias"
         name="alias"
       >
-        <Input />
+        <Input disabled={disabled} />
       </Form.Item>
       <Form.Item
         label="Address"
         name="address"
       >
-        <Input />
+        <Input disabled={disabled} />
       </Form.Item>
       <Form.Item
         label="Phone Number"
         name="phone_number"
       >
-        <Input />
+        <Input disabled={disabled} />
       </Form.Item>
       <Form.Item
         label="Email"
         name="email"
       >
-        <Input />
+        <Input disabled={disabled} />
       </Form.Item>
       <Form.Item
         wrapperCol={{
@@ -63,10 +71,15 @@ function Customer({ customer }) {
           span: 16,
         }}
       >
-        <Button type="primary" htmlType="submit">
+        <Button disabled={disabled} type="primary" htmlType="submit">
           Save
         </Button>
-
+        &nbsp;
+        <Switch 
+          checkedChildren={<CheckOutlined />}
+          unCheckedChildren={<CloseOutlined />}
+          onChange={toggle}>
+        </Switch>
       </Form.Item>
     </Form>
   );
