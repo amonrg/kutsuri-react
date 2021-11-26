@@ -1,6 +1,33 @@
-import { Form, Input, Button, Switch } from 'antd'
+import { Form, Input, Button, Switch, notification } from 'antd'
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons'
 import React from 'react'
+
+const endpoint = "http://192.168.1.64:8080/api/customers/"
+
+async function putData(url = '', data = {}) {
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(() => {
+    notification.success({
+      message: 'Success',
+      description: 'Customer successfully updated',
+      duration: 3
+    })
+  })
+  .catch(() => {
+    notification.error({
+      message: 'Error',
+      description: 'Customer could not be updated',
+      duration: 3
+    })
+  })
+}
 
 function Customer({ customer }) {
   const [disabled, setDisabled] = React.useState(true)
@@ -9,15 +36,20 @@ function Customer({ customer }) {
     setDisabled(!disabled)
   }
 
+  const onFinish = (values) => {
+    putData(`${endpoint}${values.id}`, values)
+  }
+
   return (
     <Form
       labelCol={{
         span: 8,
       }}
       wrapperCol={{
-        span: 16,
+        span: 8,
       }}
       initialValues={{
+        'id': customer.id,
         'name': customer.name,
         'last_name': customer.last_name,
         'alias': customer.alias,
@@ -25,9 +57,13 @@ function Customer({ customer }) {
         'phone_number': customer.phone_number,
         'email': customer.email
       }}
+      onFinish={onFinish}
     >
-      <Form.Item label="ID">
-        <span className="ant-form-text">{ customer.id }</span>
+      <Form.Item 
+        label="ID" 
+        name="id"
+      >
+        <Input disabled />
       </Form.Item>
       <Form.Item
         label="Name"
@@ -86,7 +122,7 @@ function Customer({ customer }) {
 }
 
 export async function getStaticPaths() {
-  const res = await fetch("http://192.168.1.94:8080/api/customers")
+  const res = await fetch(endpoint)
   const customers = await res.json()
 
   const paths = customers.map((customer) => ({
@@ -97,7 +133,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const res = await fetch(`http://192.168.1.94:8080/api/customers/${params.id}`)
+  const res = await fetch(`${endpoint}${params.id}`)
   const customer = await res.json()
 
   return { props: { customer } }
