@@ -1,8 +1,8 @@
-import { Form, Input, Button, Switch, notification } from 'antd'
+import { Form, Input, Button, Switch, notification, Breadcrumb } from 'antd'
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons'
 import React from 'react'
 
-const endpoint = "http://192.168.1.64:8080/api/customers/"
+const endpoint = "http://192.168.1.115:8080/api/customers/"
 
 async function putData(url = '', data = {}) {
   const response = await fetch(url, {
@@ -41,6 +41,12 @@ function Customer({ customer }) {
   }
 
   return (
+    <>
+    <Breadcrumb>
+      <Breadcrumb.Item><a href="/">Home</a></Breadcrumb.Item>
+      <Breadcrumb.Item><a href="/customers/">Customers Table</a></Breadcrumb.Item>
+      <Breadcrumb.Item>{customer.id}</Breadcrumb.Item>
+    </Breadcrumb>
     <Form
       labelCol={{
         span: 8,
@@ -118,6 +124,7 @@ function Customer({ customer }) {
         </Switch>
       </Form.Item>
     </Form>
+    </>
   );
 }
 

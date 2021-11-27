@@ -6,6 +6,7 @@ function CustomersTable({ customers }) {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+      render: id => <a href={`/customers/${id}`}>{id}</a>
     },
     {
       title: 'Name',
@@ -42,11 +43,11 @@ function CustomersTable({ customers }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch("http://192.168.1.94:8080/api/customers")
+  const res = await fetch("http://192.168.1.115:8080/api/customers")
   const customers = await res.json()
   return {
     props: { 
-      customers, 
+      customers,
     },
   }
 }
