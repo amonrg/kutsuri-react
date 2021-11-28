@@ -1,8 +1,7 @@
 import { Form, Input, Button, Switch, notification, Breadcrumb } from 'antd'
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons'
 import React from 'react'
-
-const endpoint = "http://192.168.1.115:8080/api/customers/"
+import { CUSTOMERS_ENDPOINT } from '../../lib/constants'
 
 async function putData(url = '', data = {}) {
   const response = await fetch(url, {
@@ -37,7 +36,7 @@ function Customer({ customer }) {
   }
 
   const onFinish = (values) => {
-    putData(`${endpoint}${values.id}`, values)
+    putData(`${CUSTOMERS_ENDPOINT}${values.id}`, values)
   }
 
   return (
@@ -129,7 +128,7 @@ function Customer({ customer }) {
 }
 
 export async function getStaticPaths() {
-  const res = await fetch(endpoint)
+  const res = await fetch(CUSTOMERS_ENDPOINT)
   const customers = await res.json()
 
   const paths = customers.map((customer) => ({
@@ -140,7 +139,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const res = await fetch(`${endpoint}${params.id}`)
+  const res = await fetch(`${CUSTOMERS_ENDPOINT}${params.id}`)
   const customer = await res.json()
 
   return { props: { customer } }
