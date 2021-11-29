@@ -1,12 +1,15 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Table, Tooltip, Space, Typography, Breadcrumb, Modal, Form, Input, notification } from 'antd'
+import { Button, Table, Tooltip, Space, Typography, Breadcrumb, Modal, Form, Input, notification, Popconfirm, Anchor, Link } from 'antd'
+import { useRouter } from 'next/router'
 import React from 'react'
 import { CUSTOMERS_ENDPOINT } from '../../lib/constants'
 
 function CustomersTable({ customers }) {
+  const { Title } = Typography
   const [visible, setVisible] = React.useState(false)
   const [confirmLoading, setConfirmLoading] = React.useState(false)
   const [form] = Form.useForm()
+  const router = useRouter()
 
   const showModal = () => {
     setVisible(true)
@@ -21,8 +24,19 @@ function CustomersTable({ customers }) {
       })
   }
 
+  const onConfirmDelete = async (id) => {
+    await fetch(`${CUSTOMERS_ENDPOINT}${id}`, {
+      method: 'DELETE',
+    })
+    .then(response => response.json())
+    .catch((error) => {
+      console.log(error)
+    })
+    router.reload()
+  }
+
   const onAdd = async (values) => {
-    const response = await fetch(CUSTOMERS_ENDPOINT, {
+    await fetch(CUSTOMERS_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -33,6 +47,7 @@ function CustomersTable({ customers }) {
     .then(() => {
       setConfirmLoading(false)
       setVisible(false)
+      router.reload()
     })
     .catch((error) => {
       setConfirmLoading(false)
@@ -80,9 +95,16 @@ function CustomersTable({ customers }) {
       title: 'Email',
       dataIndex: 'email',
       key: 'email'
+    },
+    {
+      title: 'Action',
+      dataIndex: 'id',
+      render: id => (<Popconfirm title="Are you sure?" okText="Yes" cancelText="No" 
+                                 onConfirm={() => onConfirmDelete(id)}>
+                      <a href="#">Delete</a>
+                    </Popconfirm>)
     }
   ];
-  const { Title } = Typography
   return (
     <>
     <Breadcrumb>
