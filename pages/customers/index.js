@@ -40,7 +40,7 @@ function CustomersTable({ customers }) {
     .catch((error) => {
       console.log(error)
     })
-    router.reload()
+    router.push('/customers')
   }
 
   const onAdd = async (values) => {
@@ -55,7 +55,7 @@ function CustomersTable({ customers }) {
     .then(() => {
       setConfirmLoading(false)
       setVisible(false)
-      router.reload()
+      router.push('/customers')
     })
     .catch((error) => {
       setConfirmLoading(false)
