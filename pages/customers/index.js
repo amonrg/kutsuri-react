@@ -22,6 +22,14 @@ function CustomersTable({ customers }) {
       .then((values) => {
         onAdd(values)
       })
+      .catch(() => {
+        setConfirmLoading(false)
+        notification.error({
+          message: 'Error',
+          description: 'Please input the required data',
+          duration: 3
+        })
+      })
   }
 
   const onConfirmDelete = async (id) => {
@@ -143,12 +151,14 @@ function CustomersTable({ customers }) {
             <Form.Item
               label="Name"
               name="name"
+              rules={[{ required: true, message: 'Please input a name' }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label="Last Name"
               name="last_name"
+              rules={[{ required: true, message: 'Please input a last name' }]}
             >
               <Input />
             </Form.Item>
@@ -161,6 +171,7 @@ function CustomersTable({ customers }) {
             <Form.Item
               label="Address"
               name="address"
+              rules={[{ required: true, message: 'Please input an address' }]}
             >
               <Input />
             </Form.Item>
