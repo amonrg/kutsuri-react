@@ -101,7 +101,7 @@ function CustomersTable({ customers }) {
       dataIndex: 'id',
       render: id => (<Popconfirm title="Are you sure?" okText="Yes" cancelText="No" 
                                  onConfirm={() => onConfirmDelete(id)}>
-                      <a href="#">Delete</a>
+                      <Button type="link" danger>Delete</Button>
                     </Popconfirm>)
     }
   ];
