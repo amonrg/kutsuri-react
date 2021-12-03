@@ -1,25 +1,26 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Table, Tooltip, Space, Typography, Breadcrumb, Modal, Form, Input, notification, Popconfirm, Anchor, Link } from 'antd'
+import { Button, Table, Tooltip, Space, Typography, Breadcrumb, Modal, Form, Input, notification, Popconfirm } from 'antd'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { CUSTOMERS_ENDPOINT } from '../../lib/constants'
 
 function CustomersTable({ customers }) {
   const { Title } = Typography
-  const [visible, setVisible] = React.useState(false)
+  const [visible, setModalVisible] = React.useState(false)
   const [confirmLoading, setConfirmLoading] = React.useState(false)
   const [form] = Form.useForm()
   const router = useRouter()
 
   const showModal = () => {
-    setVisible(true)
+    setModalVisible(true)
   }
 
   const handleOk = () => {
     setConfirmLoading(true)
 
     form.validateFields()
-      .then((values) => {
+      .then(values => {
+        form.resetFields()
         onAdd(values)
       })
       .catch(() => {
@@ -36,11 +37,26 @@ function CustomersTable({ customers }) {
     await fetch(`${CUSTOMERS_ENDPOINT}${id}`, {
       method: 'DELETE',
     })
-    .then(response => response.json())
-    .catch((error) => {
-      console.log(error)
+    .then(response => {
+      if (!response.ok) {
+        response.json().then(message => {
+          notification.error({
+            message: 'Error',
+            description: message["errorMessage"],
+            duration: 5
+          })
+        })
+      } else {
+        router.push("/customers")
+      }
     })
-    router.push('/customers')
+    .catch(error => {
+      notification.error({
+        message: 'Error',
+        description: 'There was an error in the network. ' + error,
+        duration: 5
+      })
+    })
   }
 
   const onAdd = async (values) => {
@@ -51,17 +67,25 @@ function CustomersTable({ customers }) {
       },
       body: JSON.stringify(values)
     })
-    .then(response => response.json())
-    .then(() => {
-      setConfirmLoading(false)
-      setVisible(false)
-      router.push('/customers')
+    .then(response => {
+      if (!response.ok) {
+        notification.error({
+          message: 'Error',
+          description: 'The request could not be completed',
+          duration: 3
+        })
+      } else {
+        setConfirmLoading(false)
+        setModalVisible(false)
+        router.push('/customers')
+        return response.json()
+      }
     })
     .catch((error) => {
       setConfirmLoading(false)
       notification.error({
         message: 'Error',
-        description: error,
+        description: 'There was an error in the network. ' + error,
         duration: 3
       })
     })
@@ -137,7 +161,7 @@ function CustomersTable({ customers }) {
           okText="Add"
           onOk={handleOk}
           confirmLoading={confirmLoading}
-          onCancel={() => setVisible(false)}
+          onCancel={() => setModalVisible(false)}
         >
           <Form
             form={form}
