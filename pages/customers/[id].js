@@ -4,26 +4,33 @@ import React from 'react'
 import { CUSTOMERS_ENDPOINT } from '../../lib/constants'
 
 async function putData(url = '', data = {}) {
-  const response = await fetch(url, {
+  await fetch(url, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(data)
   })
-  .then(response => response.json())
-  .then(() => {
-    notification.success({
-      message: 'Success',
-      description: 'Customer successfully updated',
-      duration: 3
-    })
+  .then(response => {
+    if (response.ok) {
+      notification.success({
+        message: 'Success',
+        description: 'Customer successfully updated',
+        duration: 3
+      })
+    } else {
+      notification.error({
+        message: 'Error',
+        description: 'Customer could not be updated',
+        duration: 5
+      })
+    }
   })
-  .catch(() => {
+  .catch(error => {
     notification.error({
       message: 'Error',
-      description: 'Customer could not be updated',
-      duration: 3
+      description: 'Customer could not be updated: ' + error,
+      duration: 5
     })
   })
 }
@@ -73,12 +80,14 @@ function Customer({ customer }) {
       <Form.Item
         label="Name"
         name="name"
+        rules={[{ required: true, message: 'Please input a name' }]}
       >
         <Input disabled={disabled} />
       </Form.Item>
       <Form.Item
         label="Last Name"
         name="last_name"
+        rules={[{ required: true, message: 'Please input a last name' }]}
       >
         <Input disabled={disabled} />
       </Form.Item>
@@ -91,6 +100,7 @@ function Customer({ customer }) {
       <Form.Item
         label="Address"
         name="address"
+        rules={[{ required: true, message: 'Please input an address' }]}
       >
         <Input disabled={disabled} />
       </Form.Item>
@@ -116,7 +126,8 @@ function Customer({ customer }) {
           Save
         </Button>
         &nbsp;
-        <Switch 
+        &nbsp;
+        <Switch
           checkedChildren={<CheckOutlined />}
           unCheckedChildren={<CloseOutlined />}
           onChange={toggle}>
